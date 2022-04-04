@@ -53,7 +53,6 @@ class Search extends React.Component {
       return "";
     }
     const categoriesArray = Array.from(this.state.categories);
-    console.log(categoriesArray);
     
     const maxValue = categoriesArray.reduce((previous, current, i, arr) => {
       if (
@@ -149,6 +148,11 @@ class Search extends React.Component {
           <section className="container-response">
             {this.props.value && this.props.type === 'list' &&
               <ol className="list list-response">
+                {this.state.record.length == 0 &&
+                  <div className='no-data'>
+                    <span>Nenhum item encontrado!</span>
+                  </div>
+                } 
                 {this.renderListing()}
               </ol>
             }
