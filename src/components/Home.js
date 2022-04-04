@@ -29,7 +29,8 @@ class Search extends React.Component {
   constructor(props) {
     super(props)   
     this.state = {
-      items: []
+      record: [],
+      categories: []
     }
   }
 
@@ -38,9 +39,34 @@ class Search extends React.Component {
       axios.get(this.props.value).then(res => {
         this.setState({
             record: res.data.items,
+            categories: res.data.categories
         })
       }).catch(error => console.log(error));
     }
+  }
+
+  getHighestCategory(){
+    if(!this.state.categories || this.state.categories.length == 0){
+      if(this.state.record && this.state.record.category){
+        return "Items | " + this.state.record.category;
+      }
+      return "";
+    }
+    const categoriesArray = Array.from(this.state.categories);
+    console.log(categoriesArray);
+    
+    const maxValue = categoriesArray.reduce((previous, current, i, arr) => {
+      if (
+        arr.filter(item => item === previous).length >
+        arr.filter(item => item === current).length
+      ) {
+        return previous;
+      } else {
+        return current;
+      }
+    });
+    
+    return "Items | " + maxValue;
   }
 
   renderListing() {
@@ -75,7 +101,7 @@ class Search extends React.Component {
       decimals: 0
     }
 
-    if (this.props.value && this.props.type === 'detail' && this.state.record) {
+    if (this.props.value && this.props.type === 'detail' && this.state.record && this.state.record.price) {
       description = this.state.record.description
       picture = this.state.record.picture
       price.currency = this.state.record.price.currency
@@ -115,9 +141,9 @@ class Search extends React.Component {
           </div>
         </header>
         <div className="content">
-          <div>
+          <div className="container-breadcrumb">
             <ul className="list breadcrumb">
-              <li><a href="/">breadcrumb</a></li>
+              <li><a href="/">{this.getHighestCategory()}</a></li>
             </ul>
           </div>
           <section className="container-response">
